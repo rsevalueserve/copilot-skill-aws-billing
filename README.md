@@ -1,52 +1,92 @@
-# AWS Billing Agent Skill
+# AWS Billing Skills for GitHub Copilot
 
-Este directorio contiene un **Agent Skill** diseñado para el asistente Antigravity y otros entornos basados en agentes. Permite reportar y auditar de forma segura y estructurada los costos de servicios de AWS en el mes en curso o anterior.
+GitHub Copilot skill for generating AWS billing reports using Cost Explorer API.
 
-## Estructura del Skill
+## Skills Included
 
-```text
-aws-billing/
-├── SKILL.md                 # Definición del skill para el agente de IA
-├── README.md                # Esta guía de documentación
-└── scripts/
-    └── get_billing_report.py # Script en Python que consulta Cost Explorer API
+### `aws-billing`
+Generates monthly cost reports from AWS Cost Explorer with breakdown by service. Supports current month, previous month, or specific month queries.
+
+**Features:**
+- 📊 Detailed cost breakdown by AWS service
+- 🔒 Secure authentication via AWS profiles
+- 📅 Flexible date range queries
+- 📝 Markdown-formatted output
+
+## Installation
+
+Using GitHub CLI:
+
+```bash
+# Install for GitHub Copilot
+gh skill install rsevalueserve/copilot-skill-aws-billing aws-billing
+
+# Install for other agents (e.g., Claude Code)
+gh skill install rsevalueserve/copilot-skill-aws-billing aws-billing --agent claude-code
+
+# Install at user scope (available everywhere)
+gh skill install rsevalueserve/copilot-skill-aws-billing aws-billing --scope user
 ```
 
-## Configuración y Portabilidad en GitHub
+## Prerequisites
 
-Este repositorio o directorio puede guardarse en tu GitHub y clonarse en cualquier otra máquina en la carpeta `.agents/skills/`.
-
-### Uso en otra máquina
-
-1. **Clona el skill** en la carpeta de configuraciones de agentes de tu proyecto local:
+1. **Python dependencies:**
    ```bash
-   git clone <tu-repositorio-de-skills> .agents/skills
-   ```
-2. **Configura tus credenciales de AWS**:
-   Define tu perfil en `~/.aws/credentials` o configura las variables de entorno de AWS:
-   ```bash
-   export AWS_PROFILE=rcsevsv
-   ```
-3. **Ejecuta el script**:
-   ```bash
-   python3 .agents/skills/aws-billing/scripts/get_billing_report.py --profile rcsevsv --month current
+   pip install boto3
    ```
 
-## Seguridad
+2. **AWS Configuration:**
+   Configure an AWS profile with Cost Explorer read permissions:
+   ```bash
+   aws configure --profile your-profile-name
+   ```
 
-* **Sin Hardcoding de Claves**: El script utiliza `boto3.Session()`, lo que significa que hereda de forma nativa las variables de entorno estándar (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`) o perfiles configurados mediante la CLI de AWS, garantizando que tus credenciales nunca se guarden en el código base o en repositorios de GitHub.
-* **Permiso IAM Mínimo**: El perfil o rol IAM que ejecute este script solo requiere el permiso de lectura en Cost Explorer:
-  ```json
-  {
-      "Version": "2012-10-17",
-      "Statement": [
-          {
-              "Effect": "Allow",
-              "Action": [
-                  "ce:GetCostAndUsage"
-              ],
-              "Resource": "*"
-          }
-      ]
-  }
-  ```
+3. **IAM Permissions:**
+   The AWS profile needs the following permission:
+   ```json
+   {
+       "Version": "2012-10-17",
+       "Statement": [
+           {
+               "Effect": "Allow",
+               "Action": "ce:GetCostAndUsage",
+               "Resource": "*"
+           }
+       ]
+   }
+   ```
+
+## Usage
+
+Once installed, GitHub Copilot can use the skill automatically. You can also run it manually:
+
+```bash
+# Current month report
+~/.agents/skills/aws-billing/scripts/get_billing_report.py --profile your-profile --month current
+
+# Previous month report
+~/.agents/skills/aws-billing/scripts/get_billing_report.py --profile your-profile --month previous
+
+# Specific month (YYYY-MM)
+~/.agents/skills/aws-billing/scripts/get_billing_report.py --profile your-profile --month 2026-07
+```
+
+## Security
+
+✅ **No hardcoded credentials** - Uses AWS profile-based authentication  
+✅ **Principle of least privilege** - Only requires Cost Explorer read access  
+✅ **Safe for version control** - No secrets stored in code
+
+## Updating
+
+```bash
+gh skill update aws-billing
+```
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Issues and pull requests are welcome!

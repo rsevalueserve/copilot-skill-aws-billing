@@ -3,6 +3,7 @@ name: aws-billing
 description: >-
   Genera reportes de costos mensuales del mes actual o anterior de una cuenta de AWS usando Cost Explorer.
   Ideal para monitorear presupuestos y control de gastos en AWS de forma segura.
+license: MIT
 ---
 
 # AWS Billing Reporter Skill
